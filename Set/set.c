@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define QUANTIDADE 4
-
 
 struct set{
     int quantidade;
@@ -17,23 +15,23 @@ struct set{
 
 int num_aleatorio(int min, int max);
 
-SET *cria_braralho(void){  // Incializa o baralho do set
+SET *cria_braralho(int quant){  // Incializa o baralho do set
     srand(time(NULL));
-    SET *baralho = (SET *)malloc(QUANTIDADE * QUANTIDADE * QUANTIDADE * QUANTIDADE * sizeof(SET));
+    SET *baralho = (SET *)malloc(quant * quant * quant * quant * sizeof(SET));
 
-    for(int i = 0;i<QUANTIDADE * QUANTIDADE * QUANTIDADE * QUANTIDADE;i++){
-        baralho[i].quantidade = i % QUANTIDADE;
-        baralho[i].cor = (i / QUANTIDADE) % QUANTIDADE;
-        baralho[i].forma = (i / (QUANTIDADE * QUANTIDADE)) % QUANTIDADE;
-        baralho[i].preenchimento = (i / (QUANTIDADE * QUANTIDADE * QUANTIDADE)) % QUANTIDADE;
+    for(int i = 0;i<quant * quant * quant * quant;i++){
+        baralho[i].quantidade = i % quant;
+        baralho[i].cor = (i / quant) % quant;
+        baralho[i].forma = (i / (quant * quant)) % quant;
+        baralho[i].preenchimento = (i / (quant * quant * quant)) % quant;
     }
 
     return baralho;
 }
 
-SET *embaralhar(SET *baralho){  // Embaralha o baralho
-    for(int i = 0;i<QUANTIDADE * QUANTIDADE * QUANTIDADE * QUANTIDADE;i++){
-        int j = num_aleatorio(0, QUANTIDADE * QUANTIDADE * QUANTIDADE * QUANTIDADE - 1);
+SET *embaralhar(SET *baralho, int quant){  // Embaralha o baralho
+    for(int i = 0;i<quant * quant * quant * quant;i++){
+        int j = num_aleatorio(0, quant * quant * quant * quant - 1);
         SET aux = baralho[i];
         baralho[i] = baralho[j];
         baralho[j] = aux;
@@ -62,18 +60,27 @@ int num_aleatorio(int min, int max){  // Gera um número aleatório
 }
 
 int ehSet(SET *cartas, int *indices){  // Verifica se um conjunto de cartas é um set
-    int quantidade = 0, cor = 0, forma = 0, preenchimento = 0;
+    int quantidade = (cartas + indices[0])->quantidade;
+    int cor = (cartas + indices[0])->cor;
+    int forma = (cartas + indices[0])->forma;
+    int preenchimento = (cartas + indices[0])->preenchimento;
 
-    for(int i = 0;i<3;i++){
-        quantidade += cartas[indices[i]].quantidade;
-        cor += cartas[indices[i]].cor;
-        forma += cartas[indices[i]].forma;
-        preenchimento += cartas[indices[i]].preenchimento;
+    int sum = 0;
+
+
+    if((quantidade == (cartas + indices[1])->quantidade && quantidade == (cartas + indices[2])->quantidade) || (quantidade != (cartas + indices[1])->quantidade && quantidade != (cartas + indices[2])->quantidade) ){
+        sum++;
+    }
+    if((cor == (cartas + indices[1])->cor && cor == (cartas + indices[2])->cor) || (cor != (cartas + indices[1])->cor && cor != (cartas + indices[2])->cor) ){
+        sum++;
+    }
+    if((forma == (cartas + indices[1])->forma && forma == (cartas + indices[2])->forma) || (forma != (cartas + indices[1])->forma && forma != (cartas + indices[2])->forma) ){
+        sum++;
+    }
+    if((preenchimento == (cartas + indices[1])->preenchimento && preenchimento == (cartas + indices[2])->preenchimento) || (preenchimento != (cartas + indices[1])->preenchimento && preenchimento != (cartas + indices[2])->preenchimento) ){
+        sum++;
     }
 
-    if(quantidade % QUANTIDADE == 0 && cor % QUANTIDADE == 0 && forma % QUANTIDADE == 0 && preenchimento % QUANTIDADE == 0){
-        return 1;
-    }
 
-    return 0;
+    return (sum == 4);
 }

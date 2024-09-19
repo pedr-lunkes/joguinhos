@@ -84,3 +84,13 @@ int ehSet(SET *cartas, int *indices){  // Verifica se um conjunto de cartas é u
 
     return (sum == 4);
 }
+
+void apagar_baralho(SET *baralho){
+    if(baralho == NULL){
+        return;
+    }
+
+    free(baralho);
+    baralho == NULL;
+    return;
+}
